@@ -10,7 +10,7 @@ pygame.font.init()
 my_font = pygame.font.SysFont('Futura', 50)
 my_surface = my_font.render("Press 'r' to regenerate maze", False, (0, 0, 0))
 # Change this to match your computer screen resolution
-height = 1000
+height = 400
 width = height * 3
 
 
