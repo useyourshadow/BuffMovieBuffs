@@ -22,5 +22,5 @@ This project generates random mazes and shows visually how different maze traver
 - Timers show how long each algorithm takes to arrive at the path
 - Reset button allows user to generate new maze without having to restart the program
 
-## Use
+## Usage
 User must have Python and PyGame installed to run this. Download main.py and navigate to the folder it is in. Run 'python main.py' in the command line.
