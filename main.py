@@ -144,3 +144,108 @@ def bfs(maze, queue, visited):
                 maze[nr][nc] = 5
     return True
 
+def drawMaze(canvas, arr, height, width, xOffset):
+   # Draws canvas by checking value with color
+   rectX = width / (len(arr[0]) * 3)
+   rectY = height / len(arr)
+   color = (255, 255, 255)
+   for i in range(len(arr)):
+       for j in range(len(arr[0])):
+           pygame.draw.rect(canvas, getColor(arr[i][j]), rect=(xOffset + j * rectX, i * rectY, rectX, rectY))
+
+
+
+
+size = int(input("What size would you like the maze to be? "))
+canvas = pygame.display.set_mode((width, height))
+pygame.display.set_caption("Project 3 - Maze Traversal")
+run = True
+
+
+# Initializes both mazes
+dfsMaze = generateMaze(size)
+bfsMaze = copy.deepcopy(dfsMaze)
+
+
+# Initializes variables needed for bfs and dfs
+stack = [(0, 0)]
+q = deque([(0, 0)])
+visited = {(0, 0): (-1, -1)}
+
+
+# Clock neccessities
+start_time = time.time()
+stop1 = False
+stop2 = False
+
+
+# Used to make bigger mazes take less time
+if size<150:
+   speedUp = 3
+elif size<250:
+   speedUp = 50
+else:
+   speedUp = 100
+
+
+while run:
+   canvas.fill((242, 232, 207))
+   for event in pygame.event.get():
+       if event.type == pygame.QUIT:
+           run = False
+       # Restart if they press "r"
+       if event.type == pygame.KEYDOWN:
+           if event.key == pygame.K_r:
+               # Reset variables
+               dfsMaze = generateMaze(size)
+               bfsMaze = copy.deepcopy(dfsMaze)
+               stack = [(0, 0)]
+               q = deque([(0, 0)])
+               visited = {(0, 0): (-1, -1)}
+               start_time = time.time()
+               stop1 = False
+               stop2 = False
+   # Speeds up generation so it doesn't take as long
+   for i in range(int(speedUp)):
+       runIt1 = step(dfsMaze, stack)
+       runIt2 = bfs(bfsMaze, q, visited)
+
+
+   # DFS found the goal
+   if not runIt1 and not stop1:
+       end_time1 = time.time()
+       stop1 = True
+
+
+   # Bfs found the goal
+   if not runIt2 and not stop2:
+       end_time2 = time.time()
+       stop2 = True
+
+
+   drawMaze(canvas, dfsMaze, height, width, 0)
+   bfsMaze[size - 2][size - 2] = 3
+   drawMaze(canvas, bfsMaze, height, width, 2 * width / 3)
+
+
+   # If they found the goal the end time stops
+   if stop1:
+       time1 = "DFS: " + str(round(end_time1 - start_time, 1))
+   # Otherwise it continues going up
+   else:
+       time1 = "DFS: " + str(round(time.time() - start_time, 1))
+   if stop2:
+       time2 = "BFS: " + str(round(end_time2 - start_time, 1))
+   else:
+       time2 = "BFS: " + str(round(time.time() - start_time, 1))
+
+
+   # Adding timer to canvas
+   timer1 = my_font.render(time1, False, (0, 0, 0))
+   timer2 = my_font.render(time2, False, (0, 0, 0))
+   canvas.blit(timer1, (width / 3, 0))
+   canvas.blit(timer2, (2 * width / 3 - timer2.get_width(), height - timer2.get_height()))
+   canvas.blit(my_surface, ((width - my_surface.get_width()) / 2, (height - my_surface.get_height()) / 2))
+   pygame.display.update()
+
+
